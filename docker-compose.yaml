@@ -8,6 +8,8 @@ services:
       - '3000:3000'
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./dashboards:/var/lib/grafana/dashboards
+      - ./provisioning:/etc/grafana/provisioning
     depends_on:
       - loki
     networks:
