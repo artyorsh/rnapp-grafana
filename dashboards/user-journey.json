@@ -1,0 +1,272 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "hideControls": false,
+  "id": null,
+  "uid": "user-journey",
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-datasource"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "message"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "View Details",
+                    "url": "http://localhost:3000/d/log-stats/log-stats?${env:queryparam}&var-log_message=${__value.raw}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": false,
+        "sortBy": []
+      },
+      "pluginVersion": "12.0.0-85518.patch3-85676",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "topk(50, sum by (message) (\n  count_over_time(\n    {app=~\"($app_prefix)_(ios|android)_$env\", level=~\"warn|error\", user_id=\"$user_id\"} | regexp \"(?P<message>[^\\\\?]+)\" [$__auto]\n  )\n))\n",
+          "key": "Q-26dec6e4-1362-4544-936a-5c8f5f96c02c-0",
+          "legendFormat": "Errors",
+          "queryType": "instant",
+          "refId": "A",
+          "step": "30m"
+        }
+      ],
+      "title": "warnings & errors",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #A": "count"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-datasource"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "id": 2,
+      "options": {
+        "dedupStrategy": "numbers",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": true,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "12.0.0-85518.patch3-85676",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "{app=~\"($app_prefix)_(ios|android)_$env\", level=~\"$log_level\", user_id=\"$user_id\"}",
+          "key": "Q-26dec6e4-1362-4544-936a-5c8f5f96c02c-0",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "logs ($log_level)",
+      "type": "logs"
+    }
+  ],
+  "refresh": "",
+  "rows": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "description": "",
+        "label": "User ID",
+        "name": "user_id",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "staging",
+          "value": "staging"
+        },
+        "name": "env",
+        "options": [
+          {
+            "selected": true,
+            "text": "staging",
+            "value": "staging"
+          }
+        ],
+        "query": "staging",
+        "type": "custom"
+      },
+      {
+        "allValue": "debug|info|warn|error",
+        "allowCustomValue": false,
+        "current": {
+          "text": "info|warn|error",
+          "value": "info|warn|error"
+        },
+        "description": "",
+        "includeAll": false,
+        "name": "log_level",
+        "options": [
+          {
+            "selected": false,
+            "text": "debug",
+            "value": "debug|info|warn|error"
+          },
+          {
+            "selected": false,
+            "text": "info",
+            "value": "info|warn|error"
+          },
+          {
+            "selected": false,
+            "text": "warn",
+            "value": "warn|error"
+          },
+          {
+            "selected": true,
+            "text": "error",
+            "value": "error"
+          }
+        ],
+        "query": "debug : debug|info|warn|error, info : info|warn|error, warn : warn|error, error : error ",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "rnapp",
+          "value": "rnapp"
+        },
+        "hide": 2,
+        "name": "app_prefix",
+        "query": "rnapp",
+        "skipUrlSync": true,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "User Journey",
+  "version": 0
+}
